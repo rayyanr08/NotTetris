@@ -33,20 +33,26 @@ public class BrickLayout {
     }
 
     public void doOneBrick() {
-        int bottom = 29;
-        int height = 0;
+
         if (bricks.size() != 0) {
+            int height=0;
             Brick b = bricks.remove(0);
-            for (int i = b.getStart(); i<=b.getEnd(); i++){
-                if(checkBrickSpot(height, i)){
-                    height++;
+            int num = b.getStart();
+
+
+                while (!checkBrickSpot(height, num) && num<=b.getEnd()) {
+                        height++;
+                        num++;
                 }
-            }
             for (int i = b.getStart(); i<=b.getEnd(); i++){
                 brickLayout[height][i] = 1;
             }
         }
+
+
     }
+
+
 
 
     public ArrayList<String> getFileData(String fileName) {

@@ -48,7 +48,7 @@ public class DrawPanel extends JPanel implements MouseListener{
             for (int i = 0; i < 40; i++) {
                 g.drawRect(num, numy, 20, 20);
                 if (grid[j][i] == true){
-                    g2.setColor(Color.GREEN);
+                    g2.setColor(Color.RED);
                     g2.fillRect(num,numy,20,20);
                     g2.setColor(Color.BLACK);
                 }

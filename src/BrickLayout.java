@@ -35,21 +35,24 @@ public class BrickLayout {
     public void doOneBrick() {
 
         if (bricks.size() != 0) {
-            int height=0;
+            int height = 0;
+            int lastResort = brickLayout.length-1;
             Brick b = bricks.remove(0);
-            int num = b.getStart();
-
-
-                while (!checkBrickSpot(height, num) && num<=b.getEnd()) {
-                        height++;
-                        num++;
+            for (int i = b.getStart(); i <= b.getEnd(); i++) {
+                for (int j = 0; j < brickLayout.length; j++) {
+                    if (checkBrickSpot(j, i)) {
+                        height= j-1;
+                        break;
+                    }
                 }
-            for (int i = b.getStart(); i<=b.getEnd(); i++){
-                brickLayout[height][i] = 1;
+                if (height == 0) height = brickLayout.length-1;
+                if (lastResort > height) lastResort = height;
             }
+
+                for (int i = b.getStart(); i <= b.getEnd(); i++) {
+                    brickLayout[lastResort][i] = 1;
+                }
         }
-
-
     }
 
 

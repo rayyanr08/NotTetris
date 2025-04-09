@@ -8,6 +8,9 @@ import java.util.ArrayList;
 public class DrawPanel extends JPanel implements MouseListener{
     private boolean[][] grid;
     private BrickLayout input;
+    long startTime = System.currentTimeMillis();
+    long interval = 50;
+    long currentTime;
 
 
     public DrawPanel() {
@@ -32,6 +35,22 @@ public class DrawPanel extends JPanel implements MouseListener{
                     grid[i][j] = true;
                 }
             }
+        }
+    }
+
+    public void fallBrick() throws InterruptedException {
+        long startTime = System.currentTimeMillis();
+        long interval = 50;
+        long currentTime;
+        long check = 100;
+
+        while (true) {
+            currentTime = System.currentTimeMillis();
+            if (currentTime - startTime >= interval) {
+                input.doOneBrick();
+                startTime = currentTime;
+            }
+            Thread.sleep(check);
         }
     }
 
@@ -61,7 +80,11 @@ public class DrawPanel extends JPanel implements MouseListener{
 
     public void mouseClicked(MouseEvent e) {
         grid = new boolean[30][40];
-        drawBrick();
+        try {
+            fallBrick();
+        } catch (InterruptedException ex) {
+            System.out.println("dont work");;
+        }
     }
 
     @Override

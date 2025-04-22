@@ -32,31 +32,69 @@ public class BrickLayout {
         return brickLayout;
     }
 
-    public void doOneBrick() {
+    public boolean dropOneBrick() {
+        boolean ifChanged = false;
 
-        if (bricks.size() != 0) {
-            int height = 0;
-            int lastResort = brickLayout.length-1;
+
+        if (!bricks.isEmpty()) {
             Brick b = bricks.remove(0);
-            for (int i = b.getStart(); i <= b.getEnd(); i++) {
-                for (int j = 0; j < brickLayout.length; j++) {
-                    if (checkBrickSpot(j, i)) {
-                        height= j-1;
-                        break;
-                    }
-                }
-                if (height == 0) height = brickLayout.length-1;
-                if (lastResort > height) lastResort = height;
-            }
+            b.setHeight(0);
+            fallingBricks.add(b);
+            ifChanged = true;
+        }
 
-                for (int i = b.getStart(); i <= b.getEnd(); i++) {
-                    brickLayout[lastResort][i] = 1;
-                }
+
+        ArrayList<Brick> landed = new ArrayList<>();
+        for (Brick b : fallingBricks) {
+            int newRow = b.getHeight() + 1;
+            if (canMoveDown(b, newRow)) {
+                b.setHeight(newRow);
+                ifChanged = true;
+            } else {
+                placeBrick(b);
+                landed.add(b);
+            }
+        }
+
+        fallingBricks.removeAll(landed);
+        return ifChanged;
+    }
+
+        private boolean canMoveDown(Brick b, int row) {
+        if (row >= brickLayout.length) return false;
+        for (int i = b.getStart(); i <= b.getEnd(); i++) {
+            if (brickLayout[row][i] == 1) return false;
+        }
+        return true;
+    }
+
+    private void placeBrick(Brick b) {
+        int row = b.getHeight();
+        for (int i = b.getStart(); i <= b.getEnd(); i++) {
+            brickLayout[row][i] = 1;
         }
     }
 
+    public int[][] getBrickLayout() {
+        int[][] graph = new int[brickLayout.length][brickLayout[0].length];
 
+        for (int i = 0; i < brickLayout.length; i++) {
+            for (int j = 0; j < brickLayout[0].length; j++) {
+                graph[i][j] = brickLayout[i][j];
+            }
+        }
 
+        for (Brick b : fallingBricks) {
+            int row = b.getHeight();
+            for (int i = b.getStart(); i <= b.getEnd(); i++) {
+                if (row >= 0 && row < brickLayout.length) {
+                    graph[row][i] = 1;
+                }
+            }
+        }
+
+        return graph;
+    }
 
     public ArrayList<String> getFileData(String fileName) {
         File f = new File(fileName);
@@ -73,23 +111,5 @@ public class BrickLayout {
             fileData.add(s.nextLine());
 
         return fileData;
-    }
-
-    public void printBrickLayout() {
-        for (int r = 0; r < brickLayout.length; r++) {
-            for (int c = 0; c < brickLayout[0].length; c++) {
-                System.out.print(brickLayout[r][c] + " ");
-            }
-            System.out.println();
-        }
-    }
-
-    public boolean checkBrickSpot(int r, int c) {
-        if (brickLayout[r][c] == 1) {
-            return true;
-        }
-        else {
-            return false;
-        }
     }
 }

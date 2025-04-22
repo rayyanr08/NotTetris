@@ -6,6 +6,7 @@ import java.util.Scanner;
 public class BrickLayout {
 
     private ArrayList<Brick> bricks;
+    private ArrayList<Brick> fallingBricks;
     private int[][] brickLayout;
     private int cols;
 
@@ -24,19 +25,15 @@ public class BrickLayout {
         }
     }
 
-    public int[][] getBrickLayout() {
-        return brickLayout;
-    }
-
     public boolean dropOneBrick() {
-        boolean ifChanged = false;
+        boolean changed = false;
 
 
         if (!bricks.isEmpty()) {
             Brick b = bricks.remove(0);
             b.setHeight(0);
             fallingBricks.add(b);
-            ifChanged = true;
+            changed = true;
         }
 
 
@@ -45,7 +42,7 @@ public class BrickLayout {
             int newRow = b.getHeight() + 1;
             if (canMoveDown(b, newRow)) {
                 b.setHeight(newRow);
-                ifChanged = true;
+                changed = true;
             } else {
                 placeBrick(b);
                 landed.add(b);
@@ -53,10 +50,10 @@ public class BrickLayout {
         }
 
         fallingBricks.removeAll(landed);
-        return ifChanged;
+        return changed;
     }
 
-        private boolean canMoveDown(Brick b, int row) {
+    private boolean canMoveDown(Brick b, int row) {
         if (row >= brickLayout.length) return false;
         for (int i = b.getStart(); i <= b.getEnd(); i++) {
             if (brickLayout[row][i] == 1) return false;
@@ -72,11 +69,11 @@ public class BrickLayout {
     }
 
     public int[][] getBrickLayout() {
-        int[][] graph = new int[brickLayout.length][brickLayout[0].length];
+        int[][] layoutCopy = new int[brickLayout.length][brickLayout[0].length];
 
         for (int i = 0; i < brickLayout.length; i++) {
             for (int j = 0; j < brickLayout[0].length; j++) {
-                graph[i][j] = brickLayout[i][j];
+                layoutCopy[i][j] = brickLayout[i][j];
             }
         }
 
@@ -84,12 +81,11 @@ public class BrickLayout {
             int row = b.getHeight();
             for (int i = b.getStart(); i <= b.getEnd(); i++) {
                 if (row >= 0 && row < brickLayout.length) {
-                    graph[row][i] = 1;
+                    layoutCopy[row][i] = 1;
                 }
             }
         }
-
-        return graph;
+        return layoutCopy;
     }
 
     public ArrayList<String> getFileData(String fileName) {
@@ -97,12 +93,12 @@ public class BrickLayout {
         Scanner s = null;
         try {
             s = new Scanner(f);
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             System.out.println("File not found.");
             System.exit(1);
         }
-        ArrayList<String> fileData = new ArrayList<String>();
+
+        ArrayList<String> fileData = new ArrayList<>();
         while (s.hasNextLine())
             fileData.add(s.nextLine());
 

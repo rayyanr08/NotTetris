@@ -8,15 +8,12 @@ import java.util.ArrayList;
 public class DrawPanel extends JPanel implements MouseListener{
     private boolean[][] grid;
     private BrickLayout input;
-    long startTime = System.currentTimeMillis();
-    long interval = 50;
-    long currentTime;
+    private boolean isFallingStarted = false;
 
-
+    
     public DrawPanel() {
         this.addMouseListener(this);
         grid = new boolean[30][40];
-        set2dGrid();
         input = new BrickLayout("src/bricks",40,false);
     }
 
@@ -55,21 +52,25 @@ public class DrawPanel extends JPanel implements MouseListener{
     public void mouseClicked(MouseEvent e) {
         if (!isFallingStarted && e.getButton() == MouseEvent.BUTTON1) {
             isFallingStarted = true;
+
             Thread fallingThread = new Thread(() -> {
                 long lastUpdate = System.currentTimeMillis();
+
                 while (true) {
-                    long currentTime = System.currentTimeMillis();
-                    if (currentTime - lastUpdate >= 99) {
-                        boolean hasMoreFalling = input.dropOneBrick();
-                        updateGrid();
-                        repaint();
-                        if (!hasMoreFalling) break;
+                long currentTime = System.currentTimeMillis();
+                if (currentTime - lastUpdate >= 99) {
+                    boolean hasMoreFalling = input.dropOneBrick();
+                    updateGrid();
+                    repaint();
+                        if (!hasMoreFalling) {
+                            break;
+                        }
                         lastUpdate = currentTime;
                     }
                     try {
                         Thread.sleep(10);
-                    } catch (InterruptedException x) {
-                        x.printStackTrace();
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
                     }
                 }
             });

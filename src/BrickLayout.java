@@ -11,20 +11,16 @@ public class BrickLayout {
 
     public BrickLayout(String fileName, int cols, boolean dropAllBricks) {
         this.cols = cols;
+        bricks = new ArrayList<>();
+        fallingBricks = new ArrayList<>();
+        brickLayout = new int[30][cols];
+
         ArrayList<String> fileData = getFileData(fileName);
-        bricks = new ArrayList<Brick>();
         for (String line : fileData) {
             String[] points = line.split(",");
             int start = Integer.parseInt(points[0]);
             int end = Integer.parseInt(points[1]);
-            Brick b = new Brick(start, end);
-            bricks.add(b);
-        }
-        brickLayout = new int[30][cols];
-        if (dropAllBricks) {
-            while (bricks.size() != 0) {
-                doOneBrick();
-            }
+            bricks.add(new Brick(start, end));
         }
     }
 

@@ -1,23 +1,21 @@
 import java.awt.*;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
-import javax.imageio.stream.MemoryCacheImageOutputStream;
+import java.awt.event.MouseListener;
 import javax.swing.JPanel;
-import java.util.ArrayList;
 
-public class DrawPanel extends JPanel implements MouseListener{
+public class DrawPanel extends JPanel implements MouseListener {
+
     private boolean[][] grid;
     private BrickLayout input;
     private boolean isFallingStarted = false;
 
-    
     public DrawPanel() {
         this.addMouseListener(this);
+        input = new BrickLayout("src/bricks", 40, false);
         grid = new boolean[30][40];
-        input = new BrickLayout("src/bricks",40,false);
     }
 
-    public void updateGrid() {
+    private void updateGrid() {
         int[][] layout = input.getBrickLayout();
         for (int i = 0; i < 30; i++) {
             for (int j = 0; j < 40; j++) {
@@ -26,8 +24,8 @@ public class DrawPanel extends JPanel implements MouseListener{
         }
     }
 
-    
-     protected void paintComponent(Graphics g) {
+    @Override
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         updateGrid();
 
@@ -49,21 +47,22 @@ public class DrawPanel extends JPanel implements MouseListener{
             x = 10;
         }
     }
+
+    @Override
     public void mouseClicked(MouseEvent e) {
         if (!isFallingStarted && e.getButton() == MouseEvent.BUTTON1) {
             isFallingStarted = true;
 
             Thread fallingThread = new Thread(() -> {
                 long lastUpdate = System.currentTimeMillis();
-
                 while (true) {
-                long currentTime = System.currentTimeMillis();
-                if (currentTime - lastUpdate >= 99) {
+                    long currentTime = System.currentTimeMillis();
+                    if (currentTime - lastUpdate >= 99) {
                     boolean hasMoreFalling = input.dropOneBrick();
                     updateGrid();
                     repaint();
                         if (!hasMoreFalling) {
-                            break;
+                        break;
                         }
                         lastUpdate = currentTime;
                     }
